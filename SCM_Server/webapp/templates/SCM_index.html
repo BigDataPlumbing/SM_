@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Supply Chain Model</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" user-scalable="no" />
+    <!-- <script src="/Users/n3vr/Desktop/Prog/JS/JS_HTML/dindex.js"></script>
+    <-- Parts of code should be placed hear via aditional files and following scripts ->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script defer src="/jdn.js"></script>
+    <link rel="stylesheet" type="text/css" href="/Users/n3vr/Desktop/Prog/JS/JS_HTML/css/design_.css">
+    <link href="/maps/documentation/javascript/examples/default.css" rel="stylesheet"      type="text/css" />
+    <link type="text/css" rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500">
+    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places"></script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&libraries=places"></script>
+    <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
+    <script type="text/javascript"   src="http://geoxml3.googlecode.com/svn/branches/polys/geoxml3.js"></script> -->
+
+
+    <style type="text/css">
+    
+    /*    table, th, td {
+    
+    }
+    table {
+    -canvas
+    
+    } */
+
+    html,
+    body,
+    #map {
+        height: 500px;
+        width: 500px;
+        margin: 0px;
+        padding: 0px
+    }
+
+    table.auto { table-layout: auto; }
+ 
+    table.fixed { table-layout: fixed; }
+
+    table td.button { display: none; }
+
+    .dataTable { display: none; }
+
+    th { color: white; }
+
+    tr { background-color: #f2f2f2; }
+
+    tr:nth-child(even) { background-color: #f2f2f2; }
+
+    table caption { 
+        font-size: 1.0em; 
+        text-align: left; 
+        padding: 5px 2px;
+        caption-side: top;
+    }
+
+    th, td:nth-child(1) { 
+        font-size: 1.1em; 
+        font-weight: 500; 
+    } 
+
+    tfoot tr:nth-child(1n+2) { 
+        font-size: .9em; 
+        font-weight: normal; 
+        text-align: left; 
+    }
+    td { padding: 2px; } 
+ 
+    .container-tables { 
+        width: 1150px; 
+        position:absolute; 
+        margin: 0 auto;
+    }
+
+    .wrap-table{ 
+        align: left; 
+        width: 550px; 
+        position:absolute; 
+        margin: 0px auto;
+    }
+
+    .area{ align: right; position:relative; width: 210px; margin: 0 auto;}
+
+    .datatables, .boldtable th { border: 1px black solid; empty-cells: hide;
+    border-collapse: separate; font-family: sans-serif; font-size: 14pt; color: rgb(44, 44, 44); } 
+
+    .datatables td { border: 1px black solid; empty-cells: hide;
+    border-collapse: separate; font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial; font-size: 11pt; color: rgb(44, 44, 44);} 
+
+    .warning-message { display: none; }
+    .content-wrapper { display: block; }
+
+    #locationField, #controls {
+        position: relative;
+        width: 480px;
+    }
+
+    #address {
+        border: 1px solid #000090;
+        background-color: #f0f0ff;
+        width: 480px;
+        padding-right: 2px;
+    }
+
+    #address td {
+        font-size: 10pt;
+    }
+
+    .field {
+        width: 99%;
+    }
+
+    .slimField {
+        width: 80px;
+    }
+
+    .wideField {
+        width: 200px;
+    }
+
+    #locationField {
+        height: 20px;
+        margin-bottom: 2px;
+    }
+
+@media screen and (max-width: 700px) {
+  html {
+      width: 700px;
+      overflow: auto;
+  }
+}
+
+@media (max-height: 499px), (max-width: 700px){
+  .warning-message {
+    display: block;
+  }
+  .content-wrapper {
+    display: none;
+  }
+}
+
+
+/* --- */
+
+    #description {
+        font-family: Roboto;
+        font-size: 15px;
+        font-weight: 300;
+    }
+
+    #map #infowindow-content {
+        display: inline;
+    }
+
+    #title {
+        color: #fff;
+        background-color: #4d90fe;
+        font-size: 25px;
+        font-weight: 500;
+        padding: 6px 12px;
+    }
+
+    .tag {
+        background-color: #4285F4;
+        border-radius: 8px;
+        color: #FFFFFF;
+        font-size: 14px;
+        padding: 10px 15px;
+        position: relative;
+    }
+
+    .tag::after {
+        content: "";
+        position: absolute;
+        left: 50%;
+        top: 100%;
+        transform: translate(-50%, 0);
+        width: 0;
+        height: 0;
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        border-top: 8px solid #4285F4;
+    }
+
+    #lat_o2s1 { display: none; }
+    #lng_o2s1 { display: none; }
+
+    [class$=api-load-alpha-banner] {
+        display: none;
+    }
+
+</style>
+
+
+
+<script type="text/javascript">
+    // Prep the table
+
+//initMap();
+
+//
+
+function InsertGText () {
+
+
+
+if (storageAvailable('localStorage')) {
+      alert('Local Web Storage support...')
+      // var tblc = "&nbsp;List"
+     // document.getElementById('st3c3').innerHTML = tblc;
+}
+else {
+      alert('Sorry! No Web Storage support...')
+      // var tblc = "No &nbsp;List"
+     // document.getElementById('st3c3').innerHTML = tblc;
+}
+
+}
+    //
+function SendGText_o1s1 () {
+    // Places the text in grid on the table at file 
+    // Title for the grid
+
+
+}
+
+function SendGText_o2s2 () {
+    // Places the text in grid on the table at file 
+    // Title for the grid
+
+}
+    //
+function SendGText_o2s1 () {
+    // Places the text in grid on the table at file 
+    // Title for the grid
+
+}
+function SendGText_o1s2 () {
+    // Places the text in grid on the table at file 
+    // Title for the grid
+
+}
+    //
+    //
+function SendGText_s1c1 () {
+    // Places the text in grid on the table at file 
+    // Title for the grid
+
+}
+function SendGText_s2c2 () {
+    // Places the text in grid on the table at file 
+    // Title for the grid
+
+}
+    //
+function SendGText_s2c1 () {
+    // Places the text in grid on the table at file 
+    // Title for the grid
+
+}
+function SendGText_s1c2 () {
+    // Places the text in grid on the table at file 
+    // Title for the grid
+
+}
+    //
+
+function createTable() {
+
+}
+
+// Initialize Web App
+var arr=[];  
+localStorage.setItem("lData",arr);
+window.localStorage.setItem("wData",arr);
+
+function setBg() 
+{
+  const paragraphs = document.getElementsByTagName("p");
+  const secondParagraph = paragraphs[0];
+  secondParagraph.style.background = "Green";
+}
+
+// Display presentation
+function Display()
+{
+var Page = localStorage.getItem('lData');
+    //
+    // Interactive Init of UI subroutine
+    //
+document.write(Page)
+}
+
+// Parts of code should be placed hear and via aditional files   
+
+ function Create_DB() {
+    // var data = document.getElementById('ct2c2').innerHTML
+    
+
+        alert ("File is ready ");
+    //
+    //data.push(" \n");
+    //
+    //
+    // Save_File ()
+    //
+    //
+
+ }
+</script>
+
+
+</head>
+
+<body onload="InsertGText()">
+<input class="ntables" type="button" value="Generate origin table" onclick="createTable()" />
+<input
+type="button"
+value="Display Data"
+ onclick="Display()" />
+ <div class="warning-message">
+    <p></p>
+    Use Desktop Screen device or make Tab bigger to view this page.
+    <p>&nbsp;</p>
+  </div>
+  <!-- <div id="locationField">
+    <input id="autocomplete" placeholder="Enter your address"
+           onFocus="geolocate()" type="text"></input>
+  </div> -->
+  <div class="content-wrapper">
+  </div>
+<div class="page">
+<div class="container-tables">
+    <!-- Initial table for input data -->
+    <div class="wrap-table">
+    <table> 
+        <thead>
+            <tr>
+                <th>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>
+                    <table class="datatables" id="tbl1"> 
+                        <caption>Data from Origin</caption>
+                        <!-- Table Area for the Data -->
+                        <colgroup>
+                            <!-- Description column -->
+                            <col style="background-color: rgb(180, 180, 180)" />
+                          </colgroup>
+                        <tr></tr>
+                    <thead>
+                        <!-- Title row -->
+                        <tr style="background-color: rgb(180, 180, 180)">
+                            <!-- Listing of columns -->
+                            <th id="t1c1"></th>
+                            <th></th>
+                            <th id="t1c2"></th>
+                            <th></th>
+                            <th id="t1c3"></th>
+                            <th></th>
+                            <th id="t1c4"></th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                        <tr></tr>
+                    <tbody id="t1">
+                        <tr>
+                            <!-- Track name -->
+                            <td id="t2c1"></td>
+                            <td></td>
+                            <!-- List of items -->
+                            <!-- Editable -->
+                            <td id="t2c2"></td>
+                            <td></td>
+                            <td id="t2c3"></td>
+                            <td></td>
+                            <td id="t2c4"></td>
+                            <td></td>
+                        </tr>       
+                        <tr>
+                            <!-- Track name -->
+                            <td id="t3c1"></td>
+                            <td></td>
+                            <!-- List of items -->
+                            <!-- Editable -->
+                            <td id="t3c2"></td>
+                            <td></td>
+                            <td id="t3c3"></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <!-- Track name -->
+                            <td id="t4c1"></td>
+                            <td></td>
+                            <!-- List of status -->
+                            <td id="t4c2"></td>
+                            <td></td>
+                            <td id="t4c3"></td>
+                            <td></td>
+                            <td id="t4c4"></td>
+                            <td></td>
+                        </tr>
+                        <tr></tr>
+
+                    </tbody>
+                    </table>
+                </td>
+                <td>
+                    <table>
+                    <tbody>
+                        <tr><td>&nbsp;</td></tr>
+                        
+                        <tr></tr>
+                        <tr>
+                            <td class="buttons">
+                            <input id="shopping-item" type=button value="Origin 1 to Site 1" name="filter" class='chk-btn'
+                            onclick="SendGText_o1s1(), selectChecked();" />
+                                
+                            </td>
+                            <td class="buttons">
+                            <input type=button value="Origin 1 to Site 2"
+                            onclick="SendGText_o1s2()" />
+                            </td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="buttons">
+                                <input type="text" placeholder="Latitude" id="lat_o2s1" value="-35.8" />
+                                <input type="text" placeholder="Longitude" id="lng_o2s1" value="-59.8" />
+                            <button type="button" id="addSiteId_o2s1" onclick="SendGText_o2s1()">Origin 2 to Site 1</button>
+
+                            </td>
+                            <td class="buttons">
+                            <input type=button value="Origin 2 to Site 2"
+                            onclick="SendGText_o2s2()" />
+                            </td>
+
+                        </tr>
+                    </tbody>
+                    </table>
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    <input type=button value="Enable /"
+                    onclick="document.getElementById('t1').contentEditable = 'true';alert('You can now edit data grid')" />
+                    <input type=button value="Lock editing"
+                    onclick="document.getElementById('t1').contentEditable = 'false'; " />
+                    <!-- <input type=button value="Send >"
+                    onclick="showGI()" /> -->
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    &nbsp;
+                    <button type="button" onclick="location.reload(true);">Refresh page</button>
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    <table class="datatables" id="tbl2"> 
+                        <caption>Manufacturer Data</caption>
+                        <!-- Table Area for the Data -->
+
+                        <tr></tr>
+                        <thead>
+                            <!-- Title row -->
+                            <tr style="background-color: rgb(180, 180, 180)">
+                                <!-- Listing of columns -->
+
+                                <th></th>
+                            </tr>
+                        </thead>
+                            <tr></tr>
+                        <tbody id="st1">
+                            <tr>
+                                <!-- Track name -->
+                                <td id="st2c1"></td>
+  
+                                <td></td>
+                            </tr>       
+                            <tr>
+                                <!-- Track name -->
+                                <td id="st3c1"></td>
+
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <!-- Track name -->
+                                <td id="st4c1"></td>
+
+                                <td></td>
+                            </tr>
+                            <tr></tr>
+                        </tbody>
+                    </table>
+                </td>
+                <td>
+                    <table id="dataTable">
+                        <tbody>
+                            <tr><td>&nbsp;</td></tr>
+                            
+                            <tr></tr>
+                            <tr>
+                                <td>
+                                <input type=button value="Site 1 to Client 1"
+                                onclick="SendGText_s1c1()" />
+                                </td>
+                                <td>
+                                <input type=button value="Site 1 to Client 2"
+                                onclick="SendGText_s1c2()" />
+                                </td>
+                            </tr>
+                            
+                            <tr>
+                                <td>
+                                <input type=button value="Site 2 to Client 2"
+                                onclick="SendGText_s2c2()" />
+                                </td>
+                                <td>
+                                <input type=button value="Site 2 to Client 1"
+                                onclick="SendGText_s2c1()" />
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <input type=button value="Enable /"
+                    onclick="document.getElementById('st1').contentEditable = 'true';alert('You can now edit data grid')" />
+                    <input type=button value="Lock editing"
+                    onclick="document.getElementById('st1').contentEditable = 'false'; " />
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    </div>
+
+    <div class="area">
+        <!-- Initial table for Client data -->
+        <p>Data for Client</p>
+
+        <div id="map"></div>
+
+        <div id="infowindow-content">
+            <span id="place-name" class="title"></span><br />
+            <span id="place-address"></span>
+          </div>
+          
+        <form method="post" accept-charset="utf-8" id="map_form">
+          <!-- <input type="text" name="vertices" value="" id="vertices" /> -->
+          <input type="button" name="save" value="Client" id="save" />
+        </form>
+
+        
+        <input type=button value="Enable results"
+        onclick="document.getElementById('ct1').contentEditable = 'true';alert('Your results can be stored')" />
+        <input type=button value="Store Data"
+        onclick="document.getElementById('ct1').contentEditable = 'false'; " />  
+        <input type=button value="Store"
+        onclick="Create_DB()" />  
+        <button type="button" onclick="location.reload(true);">Reload page</button>
+  <!--  <input type=button value="Show"
+        onclick="ShowI()" />  -->
+  <!-- Parts of code should be placed hear via aditional files -->
+  <!-- <script src="/Users/n3vr/Desktop/Prog/JS/JS_HTML/dindex.js"></script> -->
+
+      </div>
+
+
+
+
+    <p></p>
+
+    
+    <!-- Initial table for output data -->
+    <!-- Storage unload to Web App -->
+      <script>
+        // Parts of code should be placed hear and via aditional files
+
+
+
+      </script>
+
+<table> 
+    <thead>
+        <tr>
+            <th>
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+                -----
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+
+<script>
+</script>
+    <!-- Initial table for site data -->
+    <p></p>
+
+   
+<script>
+</script>
+        
+</div>
+</div>
+        <input
+        type="button"
+        value="Init"
+        onclick="InitSCM()" />
+    <!-- <script defer src="./jd0.js">  -->
+        <div class="warning-message">
+      It is now {{ current_date }}.
+        </div>
+    <script> 
+     
+   </script>
+
+</body>
+</html>

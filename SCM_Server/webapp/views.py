@@ -8,6 +8,6 @@ def page(request):
     now = datetime.datetime.now()
     site = open('/SCM/web/templates/SCM_index.html')
     data = Template(site.read())
-    fp.close()
+    site.close()
     html = data.render(Context({'current_date': now}))
     return HttpResponse(html)

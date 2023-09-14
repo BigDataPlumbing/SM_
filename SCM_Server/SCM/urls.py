@@ -4,7 +4,7 @@ URL configuration for SCM project.
 """
 from django.contrib import admin
 from django.urls import path
-from pubhouse.views import page
+from webapp.views import page
 
 
 urlpatterns = [
